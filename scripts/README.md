@@ -1,0 +1,1 @@
+User-facing code. For now, there should only be `go.py`. There is some consideration for this folder to be deleted and instead have the `go.py` script in the top-level folder

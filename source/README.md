@@ -1,0 +1,1 @@
+This folder is where all of the logic for the go game engine is going to live. These files will only be used by "scripts/"
