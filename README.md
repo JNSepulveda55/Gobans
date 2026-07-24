@@ -1,2 +1,2 @@
-# Gobots
-Come and test your go bots against ours!
+# Gobans
+Play go in your terminal.
