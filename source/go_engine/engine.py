@@ -1,7 +1,11 @@
             
-"""Implementation of a GO engine following GTP2"""
+"""Implementation of a GO engine following GTP2
+
+TODO: Create a test suite
+"""
 
 from dataclasses import dataclass
+from pprint import pprint
 
 # Engine
 VERSION_NUMBER = 2
@@ -17,12 +21,14 @@ LETTER_MAPPINGS = {chr(i+64): i for i in range(1, 9)} | {chr(i+64): i-1 for i in
 BLACK_INT, BLACK_STR = -1, "B"
 WHITE_INT, WHITE_STR = 1, "W"
 EMPTY_INT = 0
+STR2INT_COLOR = {BLACK_STR: BLACK_INT, WHITE_STR: WHITE_INT}
+INT2STR_COLOR = {BLACK_INT: BLACK_STR, WHITE_INT: WHITE_STR}
 
 
 
 # ---------------------- Helper Functions ---------------------- #
 def make_empty_board(board_size: list[int, int]) -> list[list[int]]:
-    return [[0]*board_size[0] for _ in range(board_size[1])]
+    return [[0]*board_size for _ in range(board_size)]
 
 
 def preprocess_input(input: str) -> str:
@@ -78,7 +84,7 @@ def name() -> str:
 class Vertex:
     """A vertex is a coordinate with a letter and a number"""
     letter: str  # A to Z, excluding I
-    number: str  # 1 to 25
+    number: int  # 1 to 25
 
     def __repr__(self):
         return self.letter + self.number
@@ -115,9 +121,18 @@ class Engine:
 
         # Internal coordinates
         x = LETTER_MAPPINGS[letter] - 1
-        y = number - 1
+        y = self.board_size - number  # Same as self.board_size - (number - 1) - 1
 
-        # Remember to handle ko
+        # Check if the vertex is empty
+        assert self.board_configuration[y][x] == EMPTY_INT, "illegal move"
+
+        self.board_configuration[y][x] = STR2INT_COLOR[color]
+
+        # TODO: Handle self-capture
+        # TODO: Handle capturing
+        # TODO: Handle ko
+        # TODO: Handle super ko
+
 
 
 
@@ -149,37 +164,24 @@ class Engine:
 
 def main() -> None:
 
-    input = """
-@dataclass
-class Vertex:
-    letter: str  # A to Z, excluding I
-    number: str  # 1 to 25
+    engine = Engine()
+    engine.boardsize(9)
+    pprint(engine.board_configuration)
+    print("-"*100)
 
-    def __repr__(self):
-        return self.letter + self.number
+    move = Move("W", Vertex("A", 1))
+    engine._place_stone(move)
+    
+    move = Move("B", Vertex("B", 1))
+    engine._place_stone(move)
 
+    pprint(engine.board_configuration)
 
-@dataclass
-class Move:
-    color: str  # B or W
-    vertex: Vertex
+    # Illegal move since that space is
+    # move = Move("W", Vertex("A", 1))
+    # engine._place_stone(move)
 
-    def __repr__(self):
-        return self.color + " " + str(self.vertex)
-
-
-class Engine:
-
-    def __init__(self):
-        self.board_size: list = [9, 9]  # (width, height)
-        self.board_configuration: list[list[int]] = make_empty_board(self.board_size)
-        self.captured_by_white: int = 0
-        self.captured_by_black: int = 0
-        self.move_history:list[Move] = []
-        self.komi: int = 6.5
-        # self.time_settings  # Currently not supported
-    """
-    print(LETTER_MAPPINGS)
+    pprint(engine.board_configuration)
 
 
 
