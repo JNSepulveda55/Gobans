@@ -2,18 +2,15 @@
 """Implementation of a GO engine following GTP2
 
 TODO: Create a test suite
+NOTE: This first implementation will use naive algorithms
 """
 
 from dataclasses import dataclass
 from pprint import pprint
 
-# Engine
-VERSION_NUMBER = 2
-ENGINE_NAME = "Gobans"
+from utils import make_empty_board  # , preprocess_input
+# from admin_commands import 
 
-# Escape Sequences
-INVALID_SCAPE_SEQUENCES = {chr(i): None for i in range(32) if i not in (9, 10)}
-TAB = chr(9)  # TAB is also known as HF
 
 # Board and stones
 DEFAULT_SIZE = 19
@@ -23,61 +20,6 @@ WHITE_INT, WHITE_STR = 1, "W"
 EMPTY_INT = 0
 STR2INT_COLOR = {BLACK_STR: BLACK_INT, WHITE_STR: WHITE_INT}
 INT2STR_COLOR = {BLACK_INT: BLACK_STR, WHITE_INT: WHITE_STR}
-
-
-
-# ---------------------- Helper Functions ---------------------- #
-def make_empty_board(board_size: list[int, int]) -> list[list[int]]:
-    return [[0]*board_size for _ in range(board_size)]
-
-
-def preprocess_input(input: str) -> str:
-
-    # 1. Remove all control characters except TAB and LF
-    input.translate(str.maketrans(INVALID_SCAPE_SEQUENCES))
-
-    # 2. Remove all comments
-    comments = []
-    in_comment = False
-    for char in input:
-        if char == "#" and not in_comment:  # Found a comment
-            comment = ""
-            in_comment = True
-
-        if char == "\n" and in_comment:  # Comments end on line breaks
-            in_comment = False  
-            comments.append(comment)
-
-        if in_comment:
-            comment += char
-
-    for comment in comments:
-        input = input.replace(comment, "")
-
-    # 3. Replace all TABs with SPACEs
-    input = input.replace(TAB, " ")
-
-    # 4. Discard any empty lines
-    lines = input.split("\n")
-    input = "\n".join([line for line in lines if (line != "" and set(line) != {" "})])
-
-    return input
-
-
-# ----------------- Administrative Commands ----------------- #
-def protocol_version() -> int:
-    return VERSION_NUMBER
-
-def name() -> str:
-    return ENGINE_NAME
-
-# def version() -> str:  # Not supported yet
-
-# def known_command(command_name: str) -> bool:  # Not supported yet
-
-# def list_commands() -> str:  # Not supported yet
-
-# def quit() -> str:  # Not supported yet
 
 
 @dataclass
